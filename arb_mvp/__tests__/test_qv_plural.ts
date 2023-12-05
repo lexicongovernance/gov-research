@@ -1,4 +1,4 @@
-import createGroupMemberships, { commonGroup, K } from '../src/qv_plural';
+import createGroupMemberships, { commonGroup, K, clusterMatch } from '../src/qv_plural';
 
 // test create group memberships 
 describe('createGroupMemberships', () => {
@@ -71,5 +71,20 @@ describe('K function', () => {
 
     const result = K(i, group, groupMemberships, contributions);
     expect(result).toEqual(2);
+  });
+});
+
+
+// Test connection oriented cluster match 
+describe('clusterMatch', () => {
+  test('calculates plurality score according to connection oriented cluster match', () => {
+    const groups: number[][] = [[0], [1]];
+    const contributions: number[] = [4, 4];
+
+    // Expected result
+    const expectedScore = 4;
+
+    const result = clusterMatch(groups, contributions);
+    expect(result).toEqual(expectedScore);
   });
 });
