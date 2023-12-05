@@ -84,13 +84,10 @@ function clusterMatch(groups: number[][], contributions: number[]): number {
 export default createGroupMemberships;
 export { commonGroup, K, clusterMatch };
   
-  // Example usage
+// Example usage
 const exampleGroups: number[][] = [[0, 1], [1, 2, 3], [0, 2]];
-
 const groupMemberships: number[][] = createGroupMemberships(exampleGroups)
-
 const exampleContributions: number[] = [1, 2, 3, 4];
-  
 const result: number = clusterMatch(exampleGroups, exampleContributions);
   
 console.log(groupMemberships);
