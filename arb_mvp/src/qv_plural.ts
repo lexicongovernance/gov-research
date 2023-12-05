@@ -1,17 +1,18 @@
 function createGroupMemberships(groups: number[][]): number[][] {
     // Define group memberships for each participant.
     // :param: groups (list of lists): a list denotes the group and contains its members. 
-    // :returns (list of lists): retunrs a list of group membersips for each participant.  
-    
-    const memberships: number[][] = new Array(groups.length).fill([]);
-  
-    for (let i = 0; i < groups.length; i++) {
+    // :returns (list of lists): retunrs a list of group membersips for each participant. 
+  const memberships: number[][] = [];
+
+  for (let i = 0; i < groups.length; i++) {
       for (let j of groups[i]) {
-        memberships[j] = [...memberships[j], i];
+          // Ensure memberships[j] is initialized as an array
+          memberships[j] = memberships[j] || [];
+          memberships[j] = [...memberships[j], i];
       }
-    }
-  
-    return memberships;
+  }
+
+  return memberships;
 }
 
 export default createGroupMemberships;
@@ -82,15 +83,14 @@ function clusterMatch(groups: number[][], contributions: number[]): number {
 }
   
   // Example usage
-const exampleGroups: number[][] = [
-    [0, 1],
-    [1, 2],
-    [0, 2],
-];
-  
-const exampleContributions: number[] = [1.5, 2.0, 1.0];
+const exampleGroups: number[][] = [[0, 1], [1, 2, 3], [0, 2]];
+
+const groupMemberships: number[][] = createGroupMemberships(exampleGroups)
+
+const exampleContributions: number[] = [1.5, 2.0, 1.0, 2];
   
 const result: number = clusterMatch(exampleGroups, exampleContributions);
   
+console.log(groupMemberships);
 console.log(result);
   
