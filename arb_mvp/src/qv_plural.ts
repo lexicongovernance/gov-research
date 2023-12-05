@@ -15,8 +15,6 @@ function createGroupMemberships(groups: number[][]): number[][] {
   return memberships;
 }
 
-export default createGroupMemberships;
-
 function commonGroup(i: number, j: number, groupMemberships: number[][]): boolean {
     // Define an identifyer indicating whether two participants share the same group or whehter any 
     // other member of the group of the second agent shares a group with the first agent. 
@@ -81,6 +79,10 @@ function clusterMatch(groups: number[][], contributions: number[]): number {
   
     return Math.sqrt(result);
 }
+
+// Export functions
+export default createGroupMemberships;
+export { commonGroup };
   
   // Example usage
 const exampleGroups: number[][] = [[0, 1], [1, 2, 3], [0, 2]];
