@@ -6,8 +6,6 @@ describe('createGroupMemberships', () => {
     const groups = [[0, 1], [1, 2, 3], [0, 2]];
 
     const result = createGroupMemberships(groups);
-
-    // Verify that the result is as expected
     expect(result).toEqual([[0, 2], [0, 1], [1, 2], [1]]);
   });
 });

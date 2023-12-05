@@ -1,15 +1,11 @@
-import * as math from 'mathjs';
-
 function quadraticVoting(votes: number[]): [Record<number, number>, number] {
-    /*
-    Calculates quadratic votes for each agent based on the square root of their votes.
-    :param: (votes): An array representing the number of votes for each agent.
-    :returns: A tuple containing a dictionary of quadratic votes for each agent and the sum of quadratic votes.
-    */
+  // Calculates quadratic votes for each agent based on the square root of their votes.
+  // :param: (votes): An array representing the number of votes for each agent.
+  // :returns: A tuple containing a dictionary of quadratic votes for each agent and the sum of quadratic votes.
   const quadraticVotesDict: Record<number, number> = {};
 
   for (let agentI = 0; agentI < votes.length; agentI++) {
-    const quadraticVotesAgentI = math.sqrt(votes[agentI]) as number;
+    const quadraticVotesAgentI = Math.sqrt(votes[agentI]);
     quadraticVotesDict[agentI] = quadraticVotesAgentI;
   }
 

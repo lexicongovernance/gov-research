@@ -47,27 +47,25 @@ function clusterMatch(groups: number[][], contributions: number[]): number {
   
     let result = 0;
   
-    // Add the contribution of each agent in each group to the result
+    // Calculate the first term of connection oriented cluster match 
     for (let g of groups) {
       for (let i of g) {
         result += contributions[i] / groupMemberships[i].length;
       }
     }
   
-    // Iterate over each pair of groups and add their contribution to the result
+    // Calculate the interaction term of connection oriented cluster match 
     for (let g of groups) {
       for (let h of groups) {
-        if (g === h) continue; // Skip if the groups are the same
+        if (g === h) continue; // Only skip if the groups are the same group instance (but not if they contain the same content) 
   
         let term1 = 0;
-        // Calculate term1 for the current pair of groups
         for (let i of g) {
           term1 += K(i, h, groupMemberships, contributions) / groupMemberships[i].length;
         }
         term1 = Math.sqrt(term1);
   
         let term2 = 0;
-        // Calculate term2 for the current pair of groups
         for (let j of h) {
           term2 += K(j, g, groupMemberships, contributions) / groupMemberships[j].length;
         }
