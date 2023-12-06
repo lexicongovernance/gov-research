@@ -27,7 +27,7 @@ function commonGroup(i: number, j: number, groupMemberships: number[][]): boolea
   
 function K(i: number, group: number[], groupMemberships: number[][], contributions: number[]): number {
     // Define the weighting function that attenuates the votes of agent i given different group memberships.  
-    // :param: agent_i denotes a participant not equal to a participant called agent_j.
+    // :param: i: denotes a participant.
     // :param: group: group denotes the other group.
     // :returns: attenuated number of votes for a given project. 
 
