@@ -1,0 +1,21 @@
+{
+  "name": "arb_mvp",
+  "version": "1.0.0",
+  "description": "voting_models",
+  "main": "src",
+  "dependencies": {
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-cli": "^29.7.0",
+    "typescript": "^5.3.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.10",
+    "ts-jest": "^29.1.1"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC"
+}
