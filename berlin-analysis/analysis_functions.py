@@ -67,6 +67,17 @@ def create_group_memberships(groups):
             memberships.setdefault(member, []).append(group)
     return memberships
 
+def get_group_categories_ids(df, names):
+    """
+    Filter the DataFrame to include only rows where the 'name' column matches any of the provided names.
+    :param: df (pd.DataFrame): The DataFrame containing group categories.
+    :param: names (list): A list of names to filter by.
+    :returns: list: A list containing the filtered 'id' column.
+    """
+    filter_condition = df['name'].isin(names)
+    filtered_df = df[filter_condition]['id'].tolist()
+    return filtered_df
+
 def remove_duplicate_groups(input_groups: dict[str, list[str]]) -> dict[str, list[str]]:
     ''' 
      Removes duplicate groups from the input array of groups.
@@ -115,3 +126,72 @@ def connection_oriented_cluster_match(groups, votes):
 
     qv_score = math.sqrt(qf_score)
     return qv_score
+
+def get_results_dict(option_ids, vote_data, group_data, group_categories_data, group_categories_names):
+    """
+    Compute various scores for each option ID based on voting and group data, and return the results in a dictionary.
+    :param: optionIds (list): A list of option IDs to process.
+    :param: voteData (DataFrame): A DataFrame containing voting data.
+    :param: groupData (DataFrame): A DataFrame containing group membership data.
+    :param: groupCategories (DataFrame): A DataFrame containing group category information.
+    :param: group_categories (list): A list of group category names that should be considered for the computation.
+    :returns: dict: A dictionary where each key is an option ID and the value is another dictionary containing:
+        - totalRawVotes (int): The sum of all votes for the option.
+        - quadraticScore (float): The quadratic voting score for the option.
+        - pluralityScore (float): The score based on connection-oriented cluster match.
+    """
+    results_dict = {}
+
+    for option_id in option_ids:
+        vote_dict = get_latest_vote_by_user_and_optionid(vote_data, option_id)
+        filtered_vote_dict = filter_zero_votes(vote_dict)
+        total_raw_votes = sum(vote_dict.values())
+        quadratic_score = sum(math.sqrt(value) for value in vote_dict.values())
+        group_categories_ids = get_group_categories_ids(group_categories_data, group_categories_names)
+        group_dict = get_groups_by_user_and_optionid(group_data, filtered_vote_dict, group_categories_ids)
+        filtered_groups = remove_duplicate_groups(group_dict)
+        plurality_score = connection_oriented_cluster_match(filtered_groups, filtered_vote_dict)
+        results_dict[option_id] = {
+            'totalRawVotes': total_raw_votes,
+            'quadraticScore': quadratic_score,
+            'pluralityScore': plurality_score,
+        }
+    return results_dict
+
+def calculate_ranks(results_dict):
+    """
+    Calculate and update ranks for each value across all options in the results dictionary.
+    :param: results_dict (dict): A dictionary where each key is an option ID and the value is another dictionary containing:
+        - totalRawVotes (int): The sum of all votes for the option.
+        - quadraticScore (float): The quadratic voting score for the option.
+        - pluralityScore (float): The score based on connection-oriented cluster match.
+
+    Returns:
+    dict: The updated results dictionary with ranks added to each score.
+    """
+    # Sort the options based on each score in descending order
+    total_raw_votes_sorted = sorted(results_dict.items(), key=lambda x: x[1]['totalRawVotes'], reverse=True)
+    quadratic_score_sorted = sorted(results_dict.items(), key=lambda x: x[1]['quadraticScore'], reverse=True)
+    result_sorted = sorted(results_dict.items(), key=lambda x: x[1]['pluralityScore'], reverse=True)
+
+    # Calculate ranks for each option based on sorted scores
+    total_raw_votes_ranks = {option[0]: rank + 1 for rank, option in enumerate(total_raw_votes_sorted)}
+    quadratic_score_ranks = {option[0]: rank + 1 for rank, option in enumerate(quadratic_score_sorted)}
+    result_ranks = {option[0]: rank + 1 for rank, option in enumerate(result_sorted)}
+
+    # Update the results_dict with ranks for each score
+    for option in results_dict:
+        results_dict[option]['totalRawVotes'] = {
+            'score': results_dict[option]['totalRawVotes'], 
+            'rank': total_raw_votes_ranks[option]
+        }
+        results_dict[option]['quadraticScore'] = {
+            'score': results_dict[option]['quadraticScore'], 
+            'rank': quadratic_score_ranks[option]
+        }
+        results_dict[option]['pluralityScore'] = {
+            'score': results_dict[option]['pluralityScore'], 
+            'rank': result_ranks[option]
+        }
+
+    return results_dict
