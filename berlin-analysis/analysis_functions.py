@@ -158,6 +158,50 @@ def get_results_dict(option_ids, vote_data, group_data, group_categories_data, g
         }
     return results_dict
 
+def get_results_dict_with_duplicates(option_ids, vote_data, group_data, group_categories_data, group_categories_names):
+    """
+    Compute various scores for each option ID based on voting and group data, and return the results in a dictionary.
+    :param: optionIds (list): A list of option IDs to process.
+    :param: voteData (DataFrame): A DataFrame containing voting data.
+    :param: groupData (DataFrame): A DataFrame containing group membership data.
+    :param: groupCategories (DataFrame): A DataFrame containing group category information.
+    :param: group_categories (list): A list of group category names that should be considered for the computation.
+    :returns: dict: A dictionary where each key is an option ID and the value is another dictionary containing:
+        - totalRawVotes (int): The sum of all votes for the option.
+        - quadraticScore (float): The quadratic voting score for the option.
+        - pluralityScore (float): The score based on connection-oriented cluster match.
+    """
+    results_dict = {}
+
+    for option_id in option_ids:
+        vote_dict = get_latest_vote_by_user_and_optionid(vote_data, option_id)
+        filtered_vote_dict = filter_zero_votes(vote_dict)
+        total_raw_votes = sum(vote_dict.values())
+        quadratic_score = sum(math.sqrt(value) for value in vote_dict.values())
+        group_categories_ids = get_group_categories_ids(group_categories_data, group_categories_names)
+        group_dict = get_groups_by_user_and_optionid(group_data, filtered_vote_dict, group_categories_ids)
+        plurality_score = connection_oriented_cluster_match(group_dict, filtered_vote_dict)
+        results_dict[option_id] = {
+            'totalRawVotes': total_raw_votes,
+            'quadraticScore': quadratic_score,
+            'pluralityScore': plurality_score,
+        }
+    return results_dict
+
+def merge_dicts(dict1, dict2):
+    """
+    Function to merge two dictionaries.
+    """
+    merged_dict = {}
+    for key in dict1.keys():
+        merged_values = {}
+        for sub_key in dict1[key]:
+            merged_values[sub_key] = dict1[key][sub_key]
+        for sub_key in dict2[key]:
+            merged_values[sub_key + "Comparison"] = dict2[key][sub_key]
+        merged_dict[key] = merged_values
+    return merged_dict
+
 def calculate_ranks(results_dict):
     """
     Calculate and update ranks for each value across all options in the results dictionary.
