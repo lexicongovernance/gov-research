@@ -1,3 +1,3 @@
 ### Decentralised governance research at lexicon 
 
-This repository contains research that aims to explore, analyze, and develop frameworks and tools related to decentralized governance systems. Our focus is on understanding the dynamics, challenges, and potential of decentralized governance in various contexts, including voting models, DAOs, and other distributed systems.
+This repository is dedicated to research related decentralized governance. It serves as a platform for exploring and analyzing various aspects of voting models, including their theoretical foundations, practical applications, and implications for governance and decision-making processes.
