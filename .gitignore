@@ -3,4 +3,5 @@ __pycache__/
 /berlin-analysis/**/*.xlsx
 /berlin-analysis/**/*.csv
 /hopr-mvp/**/*.csv
+/plural-voting-simulation-setup/**/*.png
 secrets.env 
