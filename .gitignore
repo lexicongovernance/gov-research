@@ -1,3 +1,4 @@
 __pycache__/
 /berlin-analysis/**/*.png
 /berlin-analysis/**/*.xlsx
+/berlin-analysis/**/*.csv
