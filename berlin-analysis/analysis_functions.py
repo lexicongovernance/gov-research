@@ -2,6 +2,8 @@
 This file contains analysis functions for the data analysis of the berlin event
 """
 import math
+import json
+import pandas as pd
 from itertools import combinations
 
 def get_latest_vote_by_user_and_optionid(df, option_id):
@@ -239,3 +241,38 @@ def calculate_ranks(results_dict):
         }
 
     return results_dict
+
+def filter_and_extract_credential(df):
+    """
+    Function to filter the DataFrame and extract credential
+    """
+    # Filter rows where attribute_key is 'credentialsGroup'
+    filtered_df = df[df['attribute_key'] == 'credentialsGroup'].copy()
+
+    # Extract credentials and add to a new column
+    credentials = []
+    for attribute_value in filtered_df['attribute_value']:
+        try:
+            # Parse the JSON string
+            data = json.loads(attribute_value)
+            # Extract the credential value
+            if isinstance(data, list) and len(data) > 0:
+                credentials.append(data[0].get('credential', None))
+            else:
+                credentials.append(None)
+        except (json.JSONDecodeError, TypeError):
+            credentials.append(None)
+
+    filtered_df['credential'] = credentials
+    result_df = filtered_df[['user_id', 'attribute_key', 'attribute_value', 'credential']]
+    return result_df
+
+def merge_dataframes(df1, df2):
+    """
+    Left Merge two dataframes on the user_id column and replace NaN values in 'credential' column with None.
+    """
+    merged_df = pd.merge(df1, df2, on='user_id', how='left')
+    if 'credential' in merged_df.columns:
+        merged_df['credential'] = merged_df['credential'].fillna(value='None')
+
+    return merged_df
